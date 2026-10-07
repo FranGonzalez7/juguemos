@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "257252220179",
+    "project_id": "juguemos-bef8d",
+    "storage_bucket": "juguemos-bef8d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:257252220179:android:5334858a1f47c7acb78ee6",
+        "android_client_info": {
+          "package_name": "com.frangonzalez.juguemos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxuLBkVfH4klj-99mDpbYOoEpqESPTOAY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
