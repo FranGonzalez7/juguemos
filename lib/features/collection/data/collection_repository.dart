@@ -29,6 +29,13 @@ class CollectionRepository {
         .map((snap) => snap.docs.map(BoardGame.fromDoc).toList());
   }
 
+  /// Lee la ludoteca una sola vez (sin escuchar cambios).
+  /// Útil para cálculos puntuales como el sugeridor de partidas.
+  Future<List<BoardGame>> getCollection(String uid) async {
+    final snap = await _collectionRef(uid).orderBy('name').get();
+    return snap.docs.map(BoardGame.fromDoc).toList();
+  }
+
   /// Escucha la wishlist en tiempo real.
   Stream<List<BoardGame>> watchWishlist(String uid) {
     return _wishlistRef(uid)

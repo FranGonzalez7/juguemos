@@ -29,6 +29,17 @@ class GameStatesRepository {
     });
   }
 
+  /// Lee los estados de un usuario una sola vez (para el sugeridor).
+  Future<Map<String, GameState>> getStates(String uid) async {
+    final snap = await _ref(uid).get();
+    final map = <String, GameState>{};
+    for (final doc in snap.docs) {
+      final state = GameState.fromFirestore(doc.data()['state'] as String?);
+      if (state != null) map[doc.id] = state;
+    }
+    return map;
+  }
+
   /// Fija (o cambia) el estado de un juego.
   Future<void> setState(String uid, String gameId, GameState state) {
     return _ref(uid).doc(gameId).set({
