@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../game_states/presentation/widgets/game_state_chip.dart';
 import '../../domain/board_game.dart';
 import '../providers/collection_providers.dart';
 import 'add_game_screen.dart';
@@ -130,24 +131,31 @@ class _GameTile extends ConsumerWidget {
                   : '$subtitulo\n${game.customTags.join(', ')}',
             ),
       isThreeLine: subtitulo.isNotEmpty && game.customTags.isNotEmpty,
-      trailing: IconButton(
-        icon: const Icon(Icons.delete_outline),
-        tooltip: 'Eliminar',
-        onPressed: () async {
-          final user = ref.read(authStateProvider).value;
-          if (user == null) return;
-          final repo = ref.read(collectionRepositoryProvider);
-          if (isWishlist) {
-            await repo.removeFromWishlist(user.uid, game.id);
-          } else {
-            await repo.removeFromCollection(user.uid, game.id);
-          }
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('"${game.name}" eliminado')),
-            );
-          }
-        },
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // El chip con tu valoración (Juguemos / Meh / Vetado).
+          GameStateChip(gameId: game.id),
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            tooltip: 'Eliminar',
+            onPressed: () async {
+              final user = ref.read(authStateProvider).value;
+              if (user == null) return;
+              final repo = ref.read(collectionRepositoryProvider);
+              if (isWishlist) {
+                await repo.removeFromWishlist(user.uid, game.id);
+              } else {
+                await repo.removeFromCollection(user.uid, game.id);
+              }
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('"${game.name}" eliminado')),
+                );
+              }
+            },
+          ),
+        ],
       ),
     );
   }

@@ -23,3 +23,21 @@ final wishlistProvider = StreamProvider.autoDispose<List<BoardGame>>((ref) {
   if (user == null) return Stream.value(const []);
   return ref.watch(collectionRepositoryProvider).watchWishlist(user.uid);
 });
+
+// -------------------------------------------------------------------------
+// Providers "family": reciben un uid como parámetro, así que sirven para
+// ver la ludoteca/wishlist de CUALQUIER usuario (por ejemplo, un amigo).
+// Reutilizan el mismo repositorio; solo cambia el uid que les pasamos.
+// -------------------------------------------------------------------------
+
+/// Ludoteca de un usuario concreto (por su uid).
+final userCollectionProvider =
+    StreamProvider.autoDispose.family<List<BoardGame>, String>((ref, uid) {
+  return ref.watch(collectionRepositoryProvider).watchCollection(uid);
+});
+
+/// Wishlist de un usuario concreto (por su uid).
+final userWishlistProvider =
+    StreamProvider.autoDispose.family<List<BoardGame>, String>((ref, uid) {
+  return ref.watch(collectionRepositoryProvider).watchWishlist(uid);
+});

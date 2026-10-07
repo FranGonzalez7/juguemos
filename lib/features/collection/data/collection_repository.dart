@@ -60,4 +60,21 @@ class CollectionRepository {
       'addedAt': FieldValue.serverTimestamp(),
     });
   }
+
+  /// [TEMPORAL] Añade una lista de juegos a la ludoteca de golpe.
+  ///
+  /// Usamos un WriteBatch: en lugar de hacer N escrituras sueltas, agrupamos
+  /// todas en una sola operación (más rápido y atómico: o entran todas, o
+  /// ninguna). Útil para sembrar datos de prueba hasta tener BGG.
+  Future<void> seedCollection(String uid, List<BoardGame> games) async {
+    final batch = _firestore.batch();
+    for (final game in games) {
+      final docRef = _collectionRef(uid).doc(); // id automático
+      batch.set(docRef, {
+        ...game.toMap(),
+        'addedAt': FieldValue.serverTimestamp(),
+      });
+    }
+    await batch.commit();
+  }
 }

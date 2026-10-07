@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../providers/friends_providers.dart';
 import 'add_friend_screen.dart';
+import 'friend_profile_screen.dart';
 
 /// Pantalla de Amigos: lista de personas a las que sigues.
 class FriendsScreen extends ConsumerWidget {
@@ -49,6 +50,14 @@ class FriendsScreen extends ConsumerWidget {
                 ),
                 title: Text(friend.displayName),
                 subtitle: Text(friend.email),
+                // Al tocar la fila, abrimos el perfil del amigo.
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => FriendProfileScreen(friend: friend),
+                    ),
+                  );
+                },
                 trailing: IconButton(
                   icon: const Icon(Icons.person_remove_outlined),
                   tooltip: 'Dejar de seguir',
