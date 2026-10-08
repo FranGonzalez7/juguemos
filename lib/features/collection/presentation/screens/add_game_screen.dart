@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../categories/presentation/providers/categories_providers.dart';
 import '../../domain/board_game.dart';
 import '../providers/collection_providers.dart';
 
 /// Formulario para añadir un juego a mano (temporal, hasta tener la búsqueda
-/// de BGG). Rellena los mismos campos que luego traerá BGG automáticamente.
+/// de BGG). Las categorías se SELECCIONAN de tu lista (no se escriben).
 class AddGameScreen extends ConsumerStatefulWidget {
   const AddGameScreen({super.key, required this.targetIsWishlist});
 
-  /// Si es true, el juego se añade a la wishlist; si no, a la colección.
   final bool targetIsWishlist;
 
   @override
@@ -23,8 +23,8 @@ class _AddGameScreenState extends ConsumerState<AddGameScreen> {
   final _minController = TextEditingController();
   final _maxController = TextEditingController();
   final _timeController = TextEditingController();
-  final _tagsController = TextEditingController();
 
+  final Set<String> _selectedCategories = {};
   bool _loading = false;
 
   @override
@@ -33,7 +33,6 @@ class _AddGameScreenState extends ConsumerState<AddGameScreen> {
     _minController.dispose();
     _maxController.dispose();
     _timeController.dispose();
-    _tagsController.dispose();
     super.dispose();
   }
 
@@ -45,19 +44,12 @@ class _AddGameScreenState extends ConsumerState<AddGameScreen> {
 
     setState(() => _loading = true);
 
-    // Las etiquetas vienen separadas por comas: las partimos y limpiamos.
-    final tags = _tagsController.text
-        .split(',')
-        .map((t) => t.trim())
-        .where((t) => t.isNotEmpty)
-        .toList();
-
     final game = BoardGame(
       name: _nameController.text.trim(),
       minPlayers: int.tryParse(_minController.text.trim()),
       maxPlayers: int.tryParse(_maxController.text.trim()),
       playingTime: int.tryParse(_timeController.text.trim()),
-      customTags: tags,
+      customTags: _selectedCategories.toList(),
     );
 
     final repo = ref.read(collectionRepositoryProvider);
@@ -82,6 +74,7 @@ class _AddGameScreenState extends ConsumerState<AddGameScreen> {
   @override
   Widget build(BuildContext context) {
     final destino = widget.targetIsWishlist ? 'wishlist' : 'ludoteca';
+    final categories = ref.watch(myCategoriesProvider).value ?? const [];
 
     return Scaffold(
       appBar: AppBar(title: Text('Añadir juego a tu $destino')),
@@ -142,15 +135,41 @@ class _AddGameScreenState extends ConsumerState<AddGameScreen> {
                     border: OutlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _tagsController,
-                  decoration: const InputDecoration(
-                    labelText: 'Etiquetas',
-                    helperText: 'Separadas por comas. Ej: Eurogame, Filler',
-                    border: OutlineInputBorder(),
+                const SizedBox(height: 24),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Categorías',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
+                const SizedBox(height: 8),
+                if (categories.isEmpty)
+                  const Text(
+                    'No tienes categorías todavía. Añádelas en tu perfil '
+                    '(Perfil → Mis categorías) para poder asignarlas.',
+                  )
+                else
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      for (final c in categories)
+                        FilterChip(
+                          label: Text(c),
+                          selected: _selectedCategories.contains(c),
+                          onSelected: (sel) {
+                            setState(() {
+                              if (sel) {
+                                _selectedCategories.add(c);
+                              } else {
+                                _selectedCategories.remove(c);
+                              }
+                            });
+                          },
+                        ),
+                    ],
+                  ),
                 const SizedBox(height: 24),
                 FilledButton(
                   onPressed: _loading ? null : _submit,

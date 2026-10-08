@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../providers/auth_providers.dart';
 import 'register_screen.dart';
@@ -85,6 +86,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  SvgPicture.asset(
+                    'assets/images/dado_logo.svg',
+                    height: 196,
+                  ),
+                  const SizedBox(height: 16),
                   Text(
                     'Juguemos',
                     style: Theme.of(context).textTheme.headlineMedium,

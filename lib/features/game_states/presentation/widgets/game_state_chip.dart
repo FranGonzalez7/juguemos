@@ -60,44 +60,13 @@ class GameStateChip extends ConsumerWidget {
   }
 
   Widget _pill(BuildContext context, GameState? state) {
-    // Sin marcar: pastilla discreta con solo un icono.
-    if (state == null) {
-      return Container(
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          Icons.add_reaction_outlined,
-          size: 18,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
-      );
-    }
-
-    // Con estado: pastilla de color con icono + texto.
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: state.color,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(state.icon, size: 16, color: state.onColor),
-          const SizedBox(width: 4),
-          Text(
-            state.label,
-            style: TextStyle(
-              color: state.onColor,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
+    // Mostramos SOLO un dado del color del estado (verde / amarillo / rojo).
+    // Sin marcar: un dado tenue (contorno) que invita a tocar para valorar.
+    final color = state?.color ?? Theme.of(context).colorScheme.outline;
+    final icon = state == null ? Icons.casino_outlined : Icons.casino;
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Icon(icon, color: color, size: 28),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../categories/presentation/providers/categories_providers.dart';
 import '../../../friends/presentation/providers/friends_providers.dart';
 import '../../domain/game_session.dart';
 import 'suggestions_screen.dart';
@@ -19,15 +20,14 @@ class CreateSessionScreen extends ConsumerStatefulWidget {
 
 class _CreateSessionScreenState extends ConsumerState<CreateSessionScreen> {
   final _timeController = TextEditingController();
-  final _categoryController = TextEditingController();
 
   String? _libraryOwnerUid;
+  String? _selectedCategory;
   final Set<String> _selectedPlayers = {};
 
   @override
   void dispose() {
     _timeController.dispose();
-    _categoryController.dispose();
     super.dispose();
   }
 
@@ -45,9 +45,7 @@ class _CreateSessionScreenState extends ConsumerState<CreateSessionScreen> {
           libraryOwnerName: nameByUid[_libraryOwnerUid!] ?? '?',
           players: players,
           availableMinutes: int.tryParse(_timeController.text.trim()),
-          desiredCategory: _categoryController.text.trim().isEmpty
-              ? null
-              : _categoryController.text.trim(),
+          desiredCategory: _selectedCategory,
         ),
       ),
     );
@@ -57,6 +55,7 @@ class _CreateSessionScreenState extends ConsumerState<CreateSessionScreen> {
   Widget build(BuildContext context) {
     final me = ref.watch(authStateProvider).value;
     final friends = ref.watch(followingProvider).value ?? const [];
+    final categories = ref.watch(myCategoriesProvider).value ?? const [];
 
     if (me == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -138,14 +137,32 @@ class _CreateSessionScreenState extends ConsumerState<CreateSessionScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: _categoryController,
+            DropdownButtonFormField<String?>(
+              value: categories.contains(_selectedCategory)
+                  ? _selectedCategory
+                  : null,
               decoration: const InputDecoration(
                 labelText: 'Categoría deseada (opcional)',
-                helperText: 'Ej: Eurogame, Party, Filler',
                 border: OutlineInputBorder(),
               ),
+              items: [
+                const DropdownMenuItem<String?>(
+                  value: null,
+                  child: Text('Cualquiera'),
+                ),
+                for (final c in categories)
+                  DropdownMenuItem<String?>(value: c, child: Text(c)),
+              ],
+              onChanged: (value) => setState(() => _selectedCategory = value),
             ),
+            if (categories.isEmpty)
+              const Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text(
+                  'Añade categorías en tu perfil para poder filtrar por tipo.',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ),
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: () => _goToSuggestions(nameByUid: nameByUid),

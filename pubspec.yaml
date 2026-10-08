@@ -38,10 +38,13 @@ dependencies:
   firebase_auth: ^6.7.0
   cloud_firestore: ^6.10.0
   flutter_riverpod: ^3.4.3
+  flutter_svg: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_launcher_icons: any
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -60,6 +63,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Carpetas de recursos (imágenes, iconos...). Todo lo que pongas dentro
+  # de estas carpetas se empaqueta con la app y se puede usar en el código,
+  # por ejemplo: Image.asset('assets/images/logo.png')
+  assets:
+    - assets/images/
+    - assets/icons/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -91,3 +101,18 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Configuración del generador de iconos de la app (flutter_launcher_icons).
+# Genera los iconos de Android, iOS y web a partir de un PNG cuadrado.
+# Para generarlos: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icons/app_icon.png"
+  # Icono adaptativo de Android (fondo de color + dado en primer plano)
+  adaptive_icon_background: "#4E7C5B"
+  adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
+  web:
+    generate: true
+    image_path: "assets/icons/app_icon.png"

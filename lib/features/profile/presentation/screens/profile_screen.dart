@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../categories/presentation/screens/categories_screen.dart';
 import '../../../collection/data/sample_games.dart';
 import '../../../collection/presentation/providers/collection_providers.dart';
 
@@ -30,7 +31,15 @@ class ProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 4),
             Text(user?.email ?? ''),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
+            OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const CategoriesScreen()),
+              ),
+              icon: const Icon(Icons.category_outlined),
+              label: const Text('Mis categorías'),
+            ),
+            const SizedBox(height: 16),
             FilledButton.tonalIcon(
               onPressed: () => ref.read(authRepositoryProvider).signOut(),
               icon: const Icon(Icons.logout),
